@@ -27,8 +27,9 @@
 
 WS2812rvb_t led1;
 WS2812rvb_t led2;
-//WS2812rvb_t led3;
-//WS2812rvb_t led4;
+WS2812rvb_t led3;
+WS2812rvb_t led4;
+WS2812rvb_t led5;
 
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
@@ -36,8 +37,9 @@ void setup() {
   pinMode(LED_1, OUTPUT);
   led1.setcolor(rvb_brun, 100);
     led2.setcolor(rvb_blue, 100);
-  //  led3.setcolor(rvb_green,100);
-  //   led4.setcolor(rvb_white,100);
+    led3.setcolor(rvb_green,100);
+     led4.setcolor(rvb_pink,100);
+     led5.setcolor(rvb_white,50);
   //Serial.begin(9600);
   //Serial.print("hello");
 }
@@ -55,14 +57,15 @@ void loop() {
     // //   digitalWrite(L, led1Stat);
     led1.write();
 led2.write();
-led2.write();    
-
+led3.write();    
+led4.write();    
+led5.write();  
     //    //   led4.write();
     led1.reset();
   }
 
   if (millis() - milli2   >= 1000) {
-    milli2 += 10  00;
+    milli2 += 1000;
     ledLifeStat = !ledLifeStat;
     digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
   }
