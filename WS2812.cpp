@@ -42,7 +42,7 @@ inline  void WS2812_HIGH() __attribute__((always_inline));
 //#define WS2812_HIGH() digitalWrite(PIN_WS2812,HIGH);
 
 void WS2812_LOW() {
-  PORT_WS2812 &= !MSK_WS2812;
+  PORT_WS2812 &= ~MSK_WS2812;
 }
 
 void WS2812_HIGH() {
@@ -72,14 +72,14 @@ void WS2812rvb_t::shift( uint8_t shift) {
   for (byte n = 8; n > 0; n--, shift = shift << 1) {
     if (shift & 0x80)  {
       WS2812_HIGH();  //0,3µs
-      delay2++;       //0,65µs
+      delay1++;       //0,7µs
       WS2812_LOW();
     } else {
       WS2812_HIGH();  //0,3µs
       WS2812_LOW();
-      delay2++;
+      delay1++;
     }
-    delay1++;
+    //delay1++;
   }
 
 }

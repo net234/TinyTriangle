@@ -68,5 +68,6 @@ led5.write();
     milli2 += 1000;
     ledLifeStat = !ledLifeStat;
     digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
+    led3.setcolor((uint8_t)random(0,rvb_black), 100);
   }
 }
