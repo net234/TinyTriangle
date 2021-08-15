@@ -100,9 +100,9 @@ void  rvb_t::setcolor( const e_rvb acolor, const uint8_t alevel,const uint16_t s
   this->red =   (uint16_t)map_color[color].red * level / 100;
   this->green = (uint16_t)map_color[color].green * level / 100;
   this->blue =  (uint16_t)map_color[color].blue * level / 100;
-  this->currentDelay = steady;
+  this->currentDelay = steady / 10;
   this->decreaseDelay = decrease;
-  if (level)  decreaseDelay /= level;
+  if (level)  decreaseDelay = decrease / level;
   
 }
 
@@ -117,5 +117,5 @@ void  rvb_t::anime() {
   this->red =   (uint16_t)map_color[color].red * level / 100;
   this->green = (uint16_t)map_color[color].green * level / 100;
   this->blue =  (uint16_t)map_color[color].blue * level / 100;
-  this->currentDelay = decreaseDelay;
+  this->currentDelay = decreaseDelay / 10;
 }

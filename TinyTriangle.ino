@@ -28,26 +28,20 @@
 uint8_t div10Hz = 10;
 uint8_t div1Hz = 10;
 
-WS2812rvb_t led1;
-WS2812rvb_t led2;
-WS2812rvb_t led3;
-WS2812rvb_t led4;
-WS2812rvb_t led5;
+const uint8_t ledsMAX = 5;
+WS2812rvb_t leds[ledsMAX];
 
-uint8_t delayModeOff = 15;
+uint8_t delayModeOff = 20;
 enum mode_t { modeOff, modeSearch, modeGood, modeBad}  displayMode = modeSearch;
+uint8_t displayStep = 0;
 
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_LIFE, OUTPUT);
   pinMode(BP0, INPUT_PULLUP);
-  led1.setcolor(rvb_brun, 100);
-  led2.setcolor(rvb_blue, 100);
-  led3.setcolor(rvb_green, 100);
-  led4.setcolor(rvb_pink, 100);
-  led5.setcolor(rvb_white, 50);
-  //Serial.begin(9600);
-  //Serial.print("hello");
+  for (uint8_t N = 0; N < ledsMAX; N++) {
+    leds[N].setcolor(rvb_white, 30);
+  }
 }
 
 
@@ -60,95 +54,93 @@ void loop() {
   uint16_t delta = millis() - milli1;
   if (  delta >= 10 ) {
     milli1 += 10;
-    
+
     // 100 Hzt rafraichissement bandeau
     jobRefreshLeds();
-    
+
     if (--div10Hz == 0) {
       // 10 Hzt
       div10Hz = 10;
 
       //10HZ test poussoir
       jobPoussoir();
-      
-      if (--div1Hz == 0) {
-        div1Hz = 10;
+    }
+    if (--div1Hz == 0) {
+      div1Hz = 25;
 
-        ledLifeStat = !ledLifeStat;
-        digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
+      ledLifeStat = !ledLifeStat;
+      digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
 
-        if (delayModeOff) {
-          if (--delayModeOff == 0) {
-            displayMode == modeOff;
-          }
+      if (delayModeOff) {
+        if (--delayModeOff == 0) {
+          displayMode = modeOff;
         }
-        
-        led3.setcolor((e_rvb)random(0, rvb_black), 100);
-
-        
-
       }
+      // animation
+      if (displayStep < ledsMAX) {
+      switch (displayMode) {
+        case modeOff:
+          leds[displayStep].setcolor(rvb_black, 50);
+          break;
+        case modeSearch:
+          leds[displayStep].setcolor(rvb_lightblue, 100, 10, 500);
+          break;
+        case modeGood:
+          leds[displayStep].setcolor(rvb_green, 80, 30, 400);
+          break;
+        case modeBad:
+          leds[displayStep].setcolor(rvb_orange, 80, 30, 400);
+          break;
+      }
+      }
+      displayStep = (displayStep + 1) % (ledsMAX + 6);
+
+
+
+
+
 
     }
 
 
 
   }
-  delay(1);
+  //delay(1);
 }
 
 
 
 void jobPoussoir() {
   if ( (digitalRead(BP0) == LOW) != bp0Stat ) {
-    bp0Stat=!bp0Stat;
+    bp0Stat = !bp0Stat;
     if (bp0Stat) {
-      displayMode = (mode_t)( (displayMode+1) % 4 );
-      delayModeOff = 15;
-      switch (displayMode) {
-        case modeOff: 
-        led1.setcolor(rvb_black, 50);
-        led2.setcolor(rvb_black, 50);
-        led3.setcolor(rvb_black, 50);
-        led4.setcolor(rvb_black, 50);
-        led5.setcolor(rvb_black, 50);
-        break;
-        case modeSearch: 
-        led1.setcolor(rvb_blue, 50);
-        break;
-        case modeGood: 
-        led1.setcolor(rvb_green, 100);
-        break;
-        case modeBad: 
-        led1.setcolor(rvb_red, 100);
-        break;
-      }
-
-      
+      displayMode = (mode_t)( (displayMode + 1) % 4 );
+      delayModeOff = 250;
+      displayStep = 0;
     }
-    
-    
+
+
   }
 }
 
 
 
 void jobRefreshLeds() {
-  led5.write();
-  led4.write();
-  led3.write();
-  led2.write();
-  led1.write();
-  led2.write();
-  led3.write();
-  led4.write();
-  led5.write();
-  led1.reset();
-  
-  led1.anime();
-  led2.anime();
-  led3.anime();
-  led4.anime();
-  led5.anime();
-  
+  leds[4].write();
+  leds[3].write();
+  leds[2].write();
+  leds[1].write();
+  leds[0].write();
+  leds[1].write();
+  leds[2].write();
+  leds[3].write();
+  leds[4].write();
+  leds[0].reset();
+
+  leds[0].anime();
+  leds[1].anime();
+  leds[2].anime();
+  leds[3].anime();
+  leds[4].anime();
+
 }

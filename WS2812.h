@@ -8,7 +8,7 @@
 
 //#define PIN_WS2812 D2
 
-enum e_rvb { rvb_white, rvb_red, rvb_green, rvb_blue, rvb_yellow, rvb_pink, rvb_brun, rvb_orange, rvb_black, MAX_e_rvb };
+enum e_rvb { rvb_white, rvb_red, rvb_green, rvb_blue, rvb_yellow, rvb_pink, rvb_brown, rvb_orange, rvb_lightblue, rvb_lightgreen, rvb_black, MAX_e_rvb };
 
 
 
@@ -18,26 +18,26 @@ struct  rvb_t {
   uint8_t green;
   uint8_t blue;
   uint8_t level;
-   uint8_t color;
+  uint8_t color;
   int16_t currentDelay;
   int16_t decreaseDelay;
-//   void  setcolor(const e_rvb color, const uint8_t level);
-   void  setcolor(const e_rvb color, const uint8_t level, const uint16_t steady = 10, const uint16_t decrease = 50);
-//  void  setcolor(const e_rvb color, const uint8_t level,  uint16_t steady = 100, uint16_t decrease = 2000);
+  void  setcolor(const e_rvb color, const uint8_t level, const uint16_t steady = 100, const uint16_t decrease = 1000);
   void  anime();
 };
 
 const rvb_t map_color[MAX_e_rvb] = {
-  {255, 255, 255}, // rvb_white
+  {100, 100, 100}, // rvb_white
   {255,   0,   0}, // rvb_red
   {  0, 255,   0}, // rvb_green
   {  0,   0, 255}, // rvb_blue
   {150, 100,   0}, // rvb_yellow
   {200,  50,  50}, // rvb_pink
-  {153,  71,   8}, // rvb_brun
+  {153,  71,   8}, // rvb_brown
   {200,  50,   0}, // rvb_orange
+  { 50,  50, 200}, // rvb_lightblue
+  { 50, 200,  50}, // rvb_lightgreen
   {  0,   0,   0}   // rvb_black
-};
+  };
 
 
 struct WS2812rvb_t : rvb_t {
