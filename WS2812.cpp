@@ -27,11 +27,11 @@
 //  digitalWrite(PIN_WS2812,HIGH);
 //}
 
-inline  void WS2812_LOW() __attribute__((always_inline));
+//inline  void WS2812_LOW() __attribute__((always_inline));
 //inline  void WS2812_LOW()  {
 //  digitalWrite(PIN_WS2812,LOW);;
 //}
-inline  void WS2812_HIGH() __attribute__((always_inline));
+//inline  void WS2812_HIGH() __attribute__((always_inline));
 //inline  void WS2812_HIGH() {
 //  digitalWrite(PIN_WS2812,HIGH);
 //}
