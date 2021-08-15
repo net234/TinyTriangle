@@ -86,29 +86,36 @@ void WS2812rvb_t::shift( uint8_t shift) {
 
 void  WS2812rvb_t::write() {
   noInterrupts();
-  this->shift(this->Green);
-  this->shift(this->Red);
-  this->shift(this->Blue);
+  this->shift(this->green);
+  this->shift(this->red);
+  this->shift(this->blue);
 }
 
-//void  WS2812rvbw_t::write() {
-//  WS2812rvb_t::write();
-//  this->shift(this->White);
-//}
 
-void  rvb_t::setcolor( const e_rvb color, const uint8_t level)  {
-  this->Red =   (uint16_t)map_color[color].Red * level / 100;
-  this->Green = (uint16_t)map_color[color].Green * level / 100;
-  this->Blue =  (uint16_t)map_color[color].Blue * level / 100;
+
+void  rvb_t::setcolor( const e_rvb acolor, const uint8_t alevel,const uint16_t steady ,const  uint16_t decrease )  {
+//void  rvb_t::setcolor( e_rvb color,  uint8_t level,  uint16_t steady ,  uint16_t decrease );
+  this->level = alevel;
+  this->color = acolor;
+  this->red =   (uint16_t)map_color[color].red * level / 100;
+  this->green = (uint16_t)map_color[color].green * level / 100;
+  this->blue =  (uint16_t)map_color[color].blue * level / 100;
+  this->currentDelay = steady;
+  this->decreaseDelay = decrease;
+  if (level)  decreaseDelay /= level;
+  
 }
 
-//void  WS2812rvbw_t::setcolor( const e_rvb color, const uint8_t level)  {
-//  rvb_t::setcolor(color, level);
-//  this->White = this->Red;
-//  if (this->White > this->Blue) this->White = this->Blue;
-//  if (this->White > this->Green) this->White = this->Green;
-//  
-//  this->Red -=  this->White;
-//  this->Green -=  this->White;
-//  this->Blue -=  this->White;
-//}
+void  rvb_t::anime() {
+  if (currentDelay) {
+    currentDelay--;
+    return;
+  }
+  if (level) {
+    level--;
+  }
+  this->red =   (uint16_t)map_color[color].red * level / 100;
+  this->green = (uint16_t)map_color[color].green * level / 100;
+  this->blue =  (uint16_t)map_color[color].blue * level / 100;
+  this->currentDelay = decreaseDelay;
+}

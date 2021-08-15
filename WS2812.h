@@ -14,10 +14,17 @@ enum e_rvb { rvb_white, rvb_red, rvb_green, rvb_blue, rvb_yellow, rvb_pink, rvb_
 
 
 struct  rvb_t {
-  uint8_t Red;
-  uint8_t Green;
-  uint8_t Blue;
-  void  setcolor(const e_rvb color, const uint8_t level);
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+  uint8_t level;
+   uint8_t color;
+  int16_t currentDelay;
+  int16_t decreaseDelay;
+//   void  setcolor(const e_rvb color, const uint8_t level);
+   void  setcolor(const e_rvb color, const uint8_t level, const uint16_t steady = 10, const uint16_t decrease = 50);
+//  void  setcolor(const e_rvb color, const uint8_t level,  uint16_t steady = 100, uint16_t decrease = 2000);
+  void  anime();
 };
 
 const rvb_t map_color[MAX_e_rvb] = {

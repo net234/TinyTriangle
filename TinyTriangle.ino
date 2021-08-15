@@ -25,16 +25,22 @@
 #include "Tiny.h"
 #include "WS2812.h"
 
+uint8_t div10Hz = 10;
+uint8_t div1Hz = 10;
+
 WS2812rvb_t led1;
 WS2812rvb_t led2;
 WS2812rvb_t led3;
 WS2812rvb_t led4;
 WS2812rvb_t led5;
 
+uint8_t delayModeOff = 15;
+enum mode_t { modeOff, modeSearch, modeGood, modeBad}  displayMode = modeSearch;
+
 void setup() {
   // initialize digital pin LED_BUILTIN as an output.
   pinMode(LED_LIFE, OUTPUT);
-  pinMode(LED_1, OUTPUT);
+  pinMode(BP0, INPUT_PULLUP);
   led1.setcolor(rvb_brun, 100);
   led2.setcolor(rvb_blue, 100);
   led3.setcolor(rvb_green, 100);
@@ -43,32 +49,106 @@ void setup() {
   //Serial.begin(9600);
   //Serial.print("hello");
 }
+
+
 uint32_t milli1 = millis();
-uint32_t milli2 = millis();
-bool led1Stat = true;
 bool ledLifeStat = true;
+bool bp0Stat = false;
+
 // the loop function runs over and over again forever
 void loop() {
+  uint16_t delta = millis() - milli1;
+  if (  delta >= 10 ) {
+    milli1 += 10;
+    
+    // 100 Hzt rafraichissement bandeau
+    jobRefreshLeds();
+    
+    if (--div10Hz == 0) {
+      // 10 Hzt
+      div10Hz = 10;
 
-  if (millis() - milli1  >= 100) {
-    milli1 += 100;
-    led1Stat = !led1Stat;
-    //digitalWrite(LED_1, led1Stat);
-    // //   digitalWrite(L, led1Stat);
-    for (int N = 0; N < 10; N++) {
-      led1.write();
-      led2.write();
-      led3.write();
-      led4.write();
-      led5.write();
+      //10HZ test poussoir
+      jobPoussoir();
+      
+      if (--div1Hz == 0) {
+        div1Hz = 10;
+
+        ledLifeStat = !ledLifeStat;
+        digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
+
+        if (delayModeOff) {
+          if (--delayModeOff == 0) {
+            displayMode == modeOff;
+          }
+        }
+        
+        led3.setcolor((e_rvb)random(0, rvb_black), 100);
+
+        
+
+      }
+
     }
-    led1.reset();
+
+
+
   }
+  delay(1);
+}
+
+
+
+void jobPoussoir() {
+  if ( (digitalRead(BP0) == LOW) != bp0Stat ) {
+    bp0Stat=!bp0Stat;
+    if (bp0Stat) {
+      displayMode = (mode_t)( (displayMode+1) % 4 );
+      delayModeOff = 15;
+      switch (displayMode) {
+        case modeOff: 
+        led1.setcolor(rvb_black, 50);
+        led2.setcolor(rvb_black, 50);
+        led3.setcolor(rvb_black, 50);
+        led4.setcolor(rvb_black, 50);
+        led5.setcolor(rvb_black, 50);
+        break;
+        case modeSearch: 
+        led1.setcolor(rvb_blue, 50);
+        break;
+        case modeGood: 
+        led1.setcolor(rvb_green, 100);
+        break;
+        case modeBad: 
+        led1.setcolor(rvb_red, 100);
+        break;
+      }
+
+      
+    }
+    
+    
+  }
+}
+
+
+
+void jobRefreshLeds() {
+  led5.write();
+  led4.write();
+  led3.write();
+  led2.write();
+  led1.write();
+  led2.write();
+  led3.write();
+  led4.write();
+  led5.write();
+  led1.reset();
   
-  if (millis() - milli2   >= 1000) {
-    milli2 += 1000;
-    ledLifeStat = !ledLifeStat;
-    digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
-    led3.setcolor((e_rvb)random(0, rvb_black), 100);
-  }
+  led1.anime();
+  led2.anime();
+  led3.anime();
+  led4.anime();
+  led5.anime();
+  
 }
