@@ -25,9 +25,9 @@ struct  rvbLed: rvb_t {
   int16_t baseDecDelay;
   int16_t baseIncDelay;
   uint8_t maxLevel;
-  uint8_t red;
-  uint8_t green;
-  uint8_t blue;
+//  uint8_t red;
+//  uint8_t green;
+//  uint8_t blue;
 //  uint8_t level;
   uint8_t color;
   void  setcolor(const e_rvb color, const uint8_t level, const uint16_t increase = 0, const uint16_t decrease = 0);

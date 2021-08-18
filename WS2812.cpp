@@ -45,7 +45,7 @@ void  WS2812rvb_t::reset() {
 
 
 static uint8_t delay1 = 0;
-static uint16_t delay2 = 0;
+//static uint16_t delay2 = 0;
 
 
 void WS2812rvb_t::shift( uint8_t shift) {

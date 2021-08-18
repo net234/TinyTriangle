@@ -27,11 +27,12 @@
 
 uint8_t div10Hz = 10;
 uint8_t div1Hz = 10;
+uint8_t divAnime = 250;
 
 const uint8_t ledsMAX = 9;
 WS2812rvb_t leds[ledsMAX];
 
-uint8_t delayModeOff = 20;
+uint8_t delayModeOff = 5;
 enum mode_t { modeOff, modeSearch, modeGood, modeBad}  displayMode = modeSearch;
 uint8_t displayStep = 0;
 
@@ -40,7 +41,7 @@ void setup() {
   pinMode(LED_LIFE, OUTPUT);
   pinMode(BP0, INPUT_PULLUP);
   for (uint8_t N = 0; N < ledsMAX; N++) {
-    leds[N].setcolor(rvb_white, 30, 1000,1000);
+    leds[N].setcolor(rvb_white, 80, 1000, 1000);
   }
 }
 
@@ -64,18 +65,28 @@ void loop() {
 
       //10HZ test poussoir
       jobPoussoir();
-    }
-    if (--div1Hz == 0) {
-      div1Hz = 25;
 
-      ledLifeStat = !ledLifeStat;
-      digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
+      if (--div1Hz == 0) {
+        div1Hz = 10;
 
-      if (delayModeOff) {
-        if (--delayModeOff == 0) {
-          displayMode = modeOff;
+        // job 1 Hz
+        ledLifeStat = !ledLifeStat;
+        digitalWrite(LED_LIFE, ledLifeStat);   // turn the LED on (HIGH is the voltage level)
+
+        if (delayModeOff) {
+          if (--delayModeOff == 0) {
+            displayMode = modeOff;
+          }
         }
-      }
+
+
+      }  // 1Hz
+    } // 10Hz
+
+    // annimation toute les 25 millisec
+    if (--divAnime == 0) {
+      divAnime = 25;
+
       // animation
       if (displayStep < ledsMAX) {
         switch (displayMode) {
@@ -95,15 +106,7 @@ void loop() {
       }
       displayStep = (displayStep + 1) % (ledsMAX + 6);
 
-
-
-
-
-
     }
-
-
-
   }
   //delay(1);
 }
@@ -115,7 +118,7 @@ void jobPoussoir() {
     bp0Stat = !bp0Stat;
     if (bp0Stat) {
       displayMode = (mode_t)( (displayMode + 1) % 4 );
-      delayModeOff = 250;
+      delayModeOff = 30;
       displayStep = 0;
     }
 
