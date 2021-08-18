@@ -28,7 +28,7 @@
 uint8_t div10Hz = 10;
 uint8_t div1Hz = 10;
 
-const uint8_t ledsMAX = 5;
+const uint8_t ledsMAX = 9;
 WS2812rvb_t leds[ledsMAX];
 
 uint8_t delayModeOff = 20;
@@ -40,7 +40,7 @@ void setup() {
   pinMode(LED_LIFE, OUTPUT);
   pinMode(BP0, INPUT_PULLUP);
   for (uint8_t N = 0; N < ledsMAX; N++) {
-    leds[N].setcolor(rvb_white, 30);
+    leds[N].setcolor(rvb_white, 30, 1000,1000);
   }
 }
 
@@ -56,7 +56,7 @@ void loop() {
     milli1 += 10;
 
     // 100 Hzt rafraichissement bandeau
-    jobRefreshLeds();
+    jobRefreshLeds(10);
 
     if (--div10Hz == 0) {
       // 10 Hzt
@@ -78,20 +78,20 @@ void loop() {
       }
       // animation
       if (displayStep < ledsMAX) {
-      switch (displayMode) {
-        case modeOff:
-          leds[displayStep].setcolor(rvb_black, 50);
-          break;
-        case modeSearch:
-          leds[displayStep].setcolor(rvb_lightblue, 100, 10, 500);
-          break;
-        case modeGood:
-          leds[displayStep].setcolor(rvb_green, 80, 30, 400);
-          break;
-        case modeBad:
-          leds[displayStep].setcolor(rvb_orange, 80, 30, 400);
-          break;
-      }
+        switch (displayMode) {
+          case modeOff:
+            leds[displayStep].setcolor(rvb_black, 50);
+            break;
+          case modeSearch:
+            leds[displayStep].setcolor(rvb_lightblue, 100, 1000, 1000);
+            break;
+          case modeGood:
+            leds[displayStep].setcolor(rvb_green, 80,  400, 400);
+            break;
+          case modeBad:
+            leds[displayStep].setcolor(rvb_orange, 80, 1400, 1400);
+            break;
+        }
       }
       displayStep = (displayStep + 1) % (ledsMAX + 6);
 
@@ -124,23 +124,27 @@ void jobPoussoir() {
 }
 
 
-
-void jobRefreshLeds() {
-  leds[4].write();
-  leds[3].write();
-  leds[2].write();
-  leds[1].write();
+// 110 HZ
+void jobRefreshLeds(const uint8_t delta) {
   leds[0].write();
   leds[1].write();
   leds[2].write();
   leds[3].write();
   leds[4].write();
+  leds[5].write();
+  leds[6].write();
+  leds[7].write();
+  leds[8].write();
   leds[0].reset();
 
-  leds[0].anime();
-  leds[1].anime();
-  leds[2].anime();
-  leds[3].anime();
-  leds[4].anime();
+  leds[0].anime(delta);
+  leds[1].anime(delta);
+  leds[2].anime(delta);
+  leds[3].anime(delta);
+  leds[4].anime(delta);
+  leds[5].anime(delta);
+  leds[6].anime(delta);
+  leds[7].anime(delta);
+  leds[8].anime(delta);
 
 }

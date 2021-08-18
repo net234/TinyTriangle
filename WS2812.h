@@ -17,12 +17,21 @@ struct  rvb_t {
   uint8_t red;
   uint8_t green;
   uint8_t blue;
-  uint8_t level;
+};
+
+struct  rvbLed: rvb_t {
+  int16_t decDelay;
+  int16_t incDelay;
+  int16_t baseDecDelay;
+  int16_t baseIncDelay;
+  uint8_t maxLevel;
+  uint8_t red;
+  uint8_t green;
+  uint8_t blue;
+//  uint8_t level;
   uint8_t color;
-  int16_t currentDelay;
-  int16_t decreaseDelay;
-  void  setcolor(const e_rvb color, const uint8_t level, const uint16_t steady = 100, const uint16_t decrease = 1000);
-  void  anime();
+  void  setcolor(const e_rvb color, const uint8_t level, const uint16_t increase = 0, const uint16_t decrease = 0);
+  void  anime(const uint8_t delta);
 };
 
 const rvb_t map_color[MAX_e_rvb] = {
@@ -40,21 +49,8 @@ const rvb_t map_color[MAX_e_rvb] = {
   };
 
 
-struct WS2812rvb_t : rvb_t {
+struct WS2812rvb_t : rvbLed {
   void  reset();
   void  write();
   void shift(uint8_t color);
-  //void  WS2812Write(const rvbw_t &color);
-  //void  setcolor(rvbw_t &rbv_s, const e_rvb color, const int level);
 };
-
-
-//struct WS2812rvbw_t : WS2812rvb_t {
-//  void  write();
-//  uint8_t White;
-//  void  setcolor(const e_rvb color, const uint8_t level);
-//  private:
-//  //void shift(uint8_t color);
-//  //void  WS2812Write(const rvbw_t &color);
-//  //void  setcolor(rvbw_t &rbv_s, const e_rvb color, const int level);
-//};

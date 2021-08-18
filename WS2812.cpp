@@ -20,26 +20,7 @@
 
 #define MSK_WS2812 (1 << PIN_WS2812)
 #define PORT_WS2812 PORTB
-//inline  void WS2812_LOW() __attribute__((always_inline)) {
-//  digitalWrite(PIN_WS2812,LOW);;
-//}
-//inline  void WS2812_HIGH() __attribute__((always_inline)){
-//  digitalWrite(PIN_WS2812,HIGH);
-//}
 
-//inline  void WS2812_LOW() __attribute__((always_inline));
-//inline  void WS2812_LOW()  {
-//  digitalWrite(PIN_WS2812,LOW);;
-//}
-//inline  void WS2812_HIGH() __attribute__((always_inline));
-//inline  void WS2812_HIGH() {
-//  digitalWrite(PIN_WS2812,HIGH);
-//}
-
-
-
-//#define WS2812_LOW() digitalWrite(PIN_WS2812,LOW);
-//#define WS2812_HIGH() digitalWrite(PIN_WS2812,HIGH);
 
 void WS2812_LOW() {
   PORT_WS2812 &= ~MSK_WS2812;
@@ -54,7 +35,7 @@ void  WS2812rvb_t::reset() {
   interrupts();
   pinMode(PIN_WS2812, OUTPUT);
   WS2812_LOW();
-  delayMicroseconds(10);
+  //delayMicroseconds(10);
 }
 
 //   Arduino Nano
@@ -63,8 +44,8 @@ void  WS2812rvb_t::reset() {
 //    1 = 0,95µs + 0,75µs
 
 
-  static uint8_t delay1 = 0;
-  static uint16_t delay2 = 0;
+static uint8_t delay1 = 0;
+static uint16_t delay2 = 0;
 
 
 void WS2812rvb_t::shift( uint8_t shift) {
@@ -93,29 +74,49 @@ void  WS2812rvb_t::write() {
 
 
 
-void  rvb_t::setcolor( const e_rvb acolor, const uint8_t alevel,const uint16_t steady ,const  uint16_t decrease )  {
-//void  rvb_t::setcolor( e_rvb color,  uint8_t level,  uint16_t steady ,  uint16_t decrease );
-  this->level = alevel;
+void  rvbLed::setcolor( const e_rvb acolor, const uint8_t alevel, const uint16_t increase , const  uint16_t decrease )  {
+  //void  rvb_t::setcolor( e_rvb color,  uint8_t level,  uint16_t steady ,  uint16_t decrease );
+  this->maxLevel = alevel;
   this->color = acolor;
-  this->red =   (uint16_t)map_color[color].red * level / 100;
-  this->green = (uint16_t)map_color[color].green * level / 100;
-  this->blue =  (uint16_t)map_color[color].blue * level / 100;
-  this->currentDelay = steady / 10;
-  this->decreaseDelay = decrease;
-  if (level)  decreaseDelay = decrease / level;
-  
+  this->red =   0;
+  this->green = 0;
+  this->blue =  0;
+  if (increase == 0) {
+    this->red =   (uint16_t)map_color[this->color].red * alevel / 100;
+    this->green = (uint16_t)map_color[this->color].green * alevel / 100;
+    this->blue =  (uint16_t)map_color[this->color].blue * alevel / 100; 
+  }
+  this->baseIncDelay = increase;
+  this->incDelay = increase;
+  this->baseDecDelay = decrease;
+  this->decDelay = decrease;
 }
 
-void  rvb_t::anime() {
-  if (currentDelay) {
-    currentDelay--;
+
+void  rvbLed::anime(const uint8_t delta) {
+  if (incDelay > 0) {
+    if (incDelay > delta) {
+      incDelay -= delta;
+    } else {
+      incDelay = 0;
+    }
+    uint16_t curLevel = (uint16_t)maxLevel - ( (uint32_t)maxLevel * incDelay / baseIncDelay );
+    this->red =   (uint16_t)map_color[color].red * curLevel / 100;
+    this->green = (uint16_t)map_color[color].green * curLevel / 100;
+    this->blue =  (uint16_t)map_color[color].blue * curLevel / 100;
     return;
   }
-  if (level) {
-    level--;
+
+  if (decDelay > 0) {
+    if (decDelay > delta) {
+      decDelay -= delta;
+    } else {
+      decDelay = 0;
+    }
+    uint8_t curLevel = (uint32_t)maxLevel * decDelay / baseDecDelay;
+    this->red =   (uint16_t)map_color[color].red * curLevel / 100;
+    this->green = (uint16_t)map_color[color].green * curLevel / 100;
+    this->blue =  (uint16_t)map_color[color].blue * curLevel / 100;
+    return;
   }
-  this->red =   (uint16_t)map_color[color].red * level / 100;
-  this->green = (uint16_t)map_color[color].green * level / 100;
-  this->blue =  (uint16_t)map_color[color].blue * level / 100;
-  this->currentDelay = decreaseDelay / 10;
 }
